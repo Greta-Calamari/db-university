@@ -21,3 +21,7 @@ ON `exam_student`.`exam_id`=`exams`.`id`
 ORDER BY `media`
 
 4. Contare quanti corsi di laurea ci sono per ogni dipartimento
+
+SELECT COUNT(*) AS `corsi_laurea`
+FROM `degrees`
+GROUP BY `department_id`

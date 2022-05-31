@@ -51,8 +51,94 @@ WHERE `phone` IS NULL
 
 
 
+ESERCIZI MATTINA
+
+4. Selezionare tutti gli appelli d'esame del Corso di Laurea Magistrale in Fisica del
+primo anno
+
+SELECT * 
+FROM `students`
+JOIN `exam_student`
+ON `students`.`id`= `exam_student`.`student_id`
+WHERE `students`.`name` LIKE 'ant%'
+
+
+
+5. Selezionare tutti i docenti che insegnano nel Corso di Laurea in Lettere (21)
+
+SELECT DISTINCT `teachers`.`name`,`teachers`.`surname`,`teachers`.`id`,`teachers`.`phone`,`teachers`.`email`,`teachers`.`office_address` 
+FROM `teachers`
+JOIN `course_teacher`
+ON `teachers`. `id` = `course_teacher`.`teacher_id`
+JOIN `courses` 
+ON `course_teacher`.`course_id`= `courses`.`id`
+JOIN `degrees`
+ON `courses`.`degree_id`= `degrees`.`id`
+WHERE `degrees`.`name`= 'corso di laurea in lettere'
 
 
 
 
+3. Selezionare a quale dipartimento appartiene il Corso di Laurea in Diritto
+dell'Economia (Dipartimento di Scienze politiche, giuridiche e studi internazionali)
 
+SELECT `departments`.`name`,`departments`.`id`
+FROM `departments`
+JOIN `degrees`
+ON `degrees`.`department_id` = `departments`.`id`
+WHERE `degrees`.`name`= 'corso di laurea in diritto dell\' economia';
+
+
+6. Selezionare il libretto universitario di Mirco Messina (matricola n. 620320)
+
+SELECT `courses`.`name`, `exam_student`.`vote`,`exams`.`date`
+FROM `students`
+JOIN `exam_student`
+ON `students`.`id` = `exam_student`.`student_id`
+JOIN `exams`
+ON `exam_student`.`exam_id` =`exams`.`id`
+JOIN `courses`
+ON `exams`.`course_id` = `courses`.`id`
+WHERE `students`.`registration_number`= '620320'
+AND `exam_student`.`vote`> 18
+
+GROUP BY
+2. Contare gli studenti raggruppati per anno di nascita
+
+SELECT COUNT(`id`) AS `numero_studenti`, YEAR (`date_of_birth`) AS `anno_nascita`
+FROM `students`
+GROUP BY `anno_nascita`
+
+
+-- 3. Selezionare il voto più basso dato ad ogni appello d'esame
+SELECT MIN(`vote`) AS `voto_minimo`, `exam_id`, `courses`.`name`
+FROM `exam_student`
+
+JOIN `exams`
+ON `exam_student`.`exam_id` = `exams`.`id`
+JOIN `courses`
+ON `exams`.`course_id` = `courses`.`id`
+GROUP BY `exam_id`
+
+4. Contare gli appelli d'esame del mese di luglio raggruppati per giorno
+
+SELECT COUNT(*) AS  `appelli_luglio` , DAY (`date`) AS `giorno` 
+FROM `exams`
+WHERE MONTH(`date`) = 7
+GROUP BY DAY(`date`)
+ORDER BY `date` DESC
+
+7. Selezionare il voto medio di superamento d'esame per ogni corso, con anche i dati
+del corso di laurea associato, ordinati per media voto decrescente
+
+SELECT AVG(`exam_student`.`vote`) AS `voto_medio`, `courses`.`name`,`degree`.`name` AS `dipartimento`
+FROM `exam_student`
+JOIN `exams`
+ON `exam_student`.`exam_id`= `exams`.`id`
+JOIN `courses`
+ON `exams`.`course_id` = `courses`.`id`
+JOIN `degrees`
+ON `courses`.`degree_id`= `degrees`.`id`
+WHERE `exam_student`.`vote` >= '18'
+GROUP BY `courses`.`id`
+ORDER BY `voto_medio` DESC
